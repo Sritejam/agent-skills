@@ -14,6 +14,8 @@ from agent.core import Claude, load_prompt, structured, wrap_untrusted
 
 log = logging.getLogger(__name__)
 
+# AGENT_ARCHITECT_PLACEHOLDER: example ticket-triage schema. Replace SCHEMA, validate() and the
+# prompt with your domain; audit.py fails (V4) until this line is gone.
 # additionalProperties: false on every object; enums for categories; honest `required`.
 SCHEMA: dict[str, Any] = {
     "type": "object",

@@ -33,6 +33,8 @@ log = logging.getLogger(__name__)
 
 # ------------------------------------------------------------------ tools
 
+# AGENT_ARCHITECT_PLACEHOLDER: example tool backed by a fake dict. Replace it with real, task-specific
+# behaviour (and update ALLOWED_TOOLS); audit.py fails (V4) until this line is gone.
 @tool(
     "lookup_record",
     "Look up a single record by its exact ID and return its fields as text. "

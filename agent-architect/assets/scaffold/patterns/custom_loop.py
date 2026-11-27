@@ -19,6 +19,8 @@ log = logging.getLogger(__name__)
 
 # ------------------------------------------------------------------ tools
 
+# AGENT_ARCHITECT_PLACEHOLDER: example tool backed by a fake dict. Replace it with real, task-specific
+# behaviour (and update TOOLS/HANDLERS); audit.py fails (V4) until this line is gone.
 def lookup_record(record_id: str) -> str:
     fake_db = {"42": {"name": "example", "status": "active"}}  # replace with real access
     if record_id not in fake_db:

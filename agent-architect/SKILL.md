@@ -7,6 +7,8 @@ description: Interactive, end-to-end builder for Claude-powered agents and LLM a
 
 Build Claude agents end-to-end, interactively, with the known failure modes designed out instead of discovered in production.
 
+**Scope.** Scaffolded today: Claude models, Python, and the six patterns (Anthropic SDK, Claude Agent SDK, MCP server). LangGraph, PydanticAI and Strands are recipes (guidance, no template or tests); other providers are unsupported. See the support table in `references/decision.md` §5 and the levels in `references/portability.md`, and state the support level whenever you recommend an engine.
+
 The user brings an idea. You leave them with a running, tested project whose architecture they understood and approved at each step. The value of this skill is the **gates**: you don't write code before the design is approved, and you don't call the build done until the audit and evals pass. Without gates, LLM apps ship with unbounded loops, retry storms, prompt injection holes and leaked keys, because each of those looks fine in a demo.
 
 ## Bundled resources (read when the stage calls for them)
@@ -17,6 +19,7 @@ The user brings an idea. You leave them with a running, tested project whose arc
 | `references/decision.md` | Stage 2–3 | Tier decision, pattern catalog, model selection, tool-mechanism choice |
 | `references/guardrails.md` | Stage 3–5 | The rules every generated agent must satisfy, with the *why* |
 | `references/integrations.md` | Stage 3–4 | The 20 reference repos: when to use each, install, gotchas, where to look in the source |
+| `references/portability.md` | Stage 2–6 | Support levels, architecture decisions, adapter contract, tool policy, and end-to-end gates |
 | `references/evals.md` | Stage 5 | Eval-set design, red-team cases, regression gate |
 | `scripts/scaffold.py` | Stage 4 | Creates the project from `assets/scaffold/` |
 | `scripts/audit.py` | Stage 5 | Static checker for known flaws; exit 1 on errors |
@@ -42,7 +45,7 @@ Translate feelings into contracts: "fast" → a latency number, "accurate" → a
 
 ## Stage 2: Decide the tier
 
-Read `references/decision.md` and run the four checks (complexity, value, viability, cost of error). Present the result as a short table with your recommendation: **single call / workflow / agent / hybrid**.
+Read `references/decision.md` and `references/portability.md`. Run the four checks (complexity, value, viability, cost of error). Present the result as a short table with your recommendation: **single call / workflow / agent / hybrid**. Also identify provider/model, framework/runtime, tool protocol, required services, and deployment target. Mark each selected stack component as scaffolded, recipe, experimental, or unsupported; do not imply that a reference repo is a tested scaffold.
 
 Be willing to say "you don't need an agent". Most requests are a workflow with one open-ended step; an agent there costs latency, money and reliability for nothing. The user can overrule you, and if they do, record the reason in the requirements doc.
 
@@ -51,13 +54,14 @@ Be willing to say "you don't need an agent". Most requests are a workflow with o
 Write `design/architecture.md` in the target project dir with:
 
 1. **Pattern** (from the catalog) + a small ASCII diagram of the flow
-2. **Model per step** with reason (pinned IDs, see decision.md)
-3. **Tools**: for each capability, built-in vs custom tool vs MCP server vs skill, and why (lightest mechanism that works)
-4. **Integrations** picked from `references/integrations.md` (memory, tracing, MCP presets, engine), each with a one-line justification. Default is *none*: add one only when a requirement needs it.
-5. **Guardrails**: which hooks/policies apply, permission mode, side-effect boundaries, human-approval points
-6. **Context plan**: what goes in system vs user vs tool_result, what gets cached, pruning
-7. **Eval plan**: the categories and roughly how many cases
-8. **Cost/latency estimate**: tokens per run × expected volume, using the user's numbers
+2. **Stack and maturity**: provider/model, framework/runtime, language, tool protocol, deployment target, versions, support levels, and relevant capability gaps
+3. **Model per step** with reason (pinned IDs, see decision.md)
+4. **Tools and services**: for each capability, mechanism, data access, authorization scope, side effects, timeout/retry/idempotency, and human approval
+5. **Integrations** picked from `references/integrations.md` (memory, tracing, MCP presets, engine), each with a one-line justification. Default is *none*: add one only when a requirement needs it.
+6. **Guardrails and state**: permission policies, side-effect boundaries, approval points, session/tenant isolation, retention/deletion
+7. **Context and failure plan**: system vs user vs tool result, caching/pruning, retries, timeouts, cancellation, and recovery
+8. **Verification and operations**: eval plan, test levels, deployment checks if requested, monitoring/rollback needs, open risks
+9. **Cost/latency estimate**: tokens per run × expected volume, using the user's numbers
 
 Then **stop and get explicit approval**. Show the diagram and the key choices inline, not just the file path. Revise until they approve. This gate exists because changing architecture after scaffolding costs 10× more than changing a doc.
 
@@ -70,13 +74,15 @@ python ~/.claude/skills/agent-architect/scripts/scaffold.py \
   --model <model-id> [--with mem0,langfuse,phoenix,graphiti,mcp-github,mcp-playwright,mcp-filesystem]
 ```
 
-The scaffold gives every project the same safe core (`agent/core/`: one client, guards, output validation, config, cost ledger), the chosen pattern as `agent/main.py`, Claude Code config (`CLAUDE.md`, `.claude/settings.json` + PreToolUse guard hook), evals, tests, `.env.example` and `.gitignore`. Read the generated `CLAUDE.md` once: it describes the layout.
+The current scaffold generates **Python/Anthropic-based** projects and includes Claude Code config. Its runtime paths differ: Agent SDK templates call the SDK directly, while Messages API patterns use `agent/core/client.py`. Do not claim identical transport retries or accounting across patterns unless verified. For a non-scaffolded stack, follow its support level: use a recipe only after validating the installed APIs and required guardrail capabilities; do not present an experimental combination as tested.
 
-Then build the domain logic **with the user**, one piece at a time:
+Then build the domain logic **with the user**, one piece at a time. Treat scaffold examples as placeholders, not as the user's implementation:
 - Write the system prompt in `agent/prompts/system.md` (stable rules only; no per-request data, no timestamps, since both break caching).
 - Implement tools with descriptions that say what, when, when-not, and limits (see guardrails.md §Tools).
 - Wire chosen integrations from `agent/integrations/`. Grep the reference repo before touching their APIs.
-- Turn the interview's input/output examples into `evals/cases.yaml`.
+- Replace every fake/demo tool with an authorized implementation or a clearly reported omission.
+- Turn the interview's input/output examples into `evals/cases.yaml`; starter examples do not demonstrate acceptance criteria.
+- Remove every scaffold placeholder: code marked `AGENT_ARCHITECT_PLACEHOLDER` and every `placeholder: true` eval case. `audit.py` fails (rule V4) until they are gone, because evals passing against a fake `lookup_record` prove nothing.
 
 Show each meaningful piece as you go. Don't silently generate 15 files.
 
@@ -87,13 +93,14 @@ Run, in order, and fix until clean:
 1. `python ~/.claude/skills/agent-architect/scripts/audit.py <project>`: zero errors (warnings need a stated reason to keep)
 2. `pytest -q` in the project: guards and output tests run without an API key
 3. Evals (`python evals/run_evals.py`): these spend API credits, so **ask before running** and say roughly how many calls. Read `references/evals.md`. Red-team cases must pass too.
-4. Re-read `references/guardrails.md` checklist against the code for anything the audit can't see (semantic validation, approval points, PII paths).
+4. Re-read `references/guardrails.md` and `references/portability.md` checklists against the code for anything the audit can't see (semantic validation, approval points, PII paths, adapter gaps).
+5. If production deployment is in scope, verify its CI/build, secret configuration, health/failure behavior, monitoring, rollback, and operator documentation. Mark unchecked items as unverified; do not claim production readiness from local tests.
 
 When something fails, fix the cause rather than the check: rewrite a vague tool description before touching models; tighten the prompt before adding retries.
 
 ## Stage 6: Hand off
 
-Give the user a short summary: how to run it, what it's guarded against, the eval scores, the cost estimate, and the **open risks** you know about. Point them to `design/architecture.md` and offer next steps (more eval cases, adding tracing, deploying).
+Give the user a short summary: how to run it, selected stack and support level, what is guarded, exact tests/eval evidence, cost estimate, deployment status, and **open risks**. Distinguish scaffold validation from user-requirement validation. Point them to `design/architecture.md` and report unsupported or unverified pieces explicitly.
 
 ## Principles that override convenience
 

@@ -28,6 +28,8 @@ log = logging.getLogger("{{name}}")
 
 mcp = _Server("{{name}}")
 
+# AGENT_ARCHITECT_PLACEHOLDER: example tool + resource backed by a fake dict. Replace them with
+# real, task-specific behaviour; audit.py fails (V4) until this line is gone.
 _FAKE_DB = {"42": {"name": "example", "status": "active"}}  # replace with real access
 
 
