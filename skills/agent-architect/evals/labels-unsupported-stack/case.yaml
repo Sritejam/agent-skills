@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: labels-unsupported-stack
+expected_outcome: |
+  The skill is honest about support levels: the scaffold only generates Claude/Python projects, so a non-Claude provider is unsupported, and LangGraph is a recipe (guidance only, no template or tests). It does not generate an OpenAI project or claim the template covers this stack. It offers supported alternatives, such as the Claude-based scaffold, LangGraph with Claude as a hand-built recipe, or design-only advice, and asks the user which they want.

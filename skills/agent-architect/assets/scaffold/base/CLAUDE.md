@@ -8,7 +8,7 @@ Claude-powered {{pattern}} built with the agent-architect scaffold. Design: `des
 - Tests (no API key): `pytest -q`
 - Validate evals: `python evals/run_evals.py --dry-run`
 - Run evals (costs API credits): `python evals/run_evals.py`
-- Audit: `python ~/.claude/skills/agent-architect/scripts/audit.py .`
+- Audit: `python {{skill_dir}}/scripts/audit.py .`
 
 ## Layout
 - `agent/main.py`: entry point, exposes `run(task: str) -> str`

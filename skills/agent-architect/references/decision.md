@@ -82,7 +82,7 @@ An MCP server where a custom tool fits is overbuilding. Skills and MCP complemen
 
 ## 5. Engine choice
 
-Support levels: **Scaffolded** = `scaffold.py` generates it, the audit understands it, and the generated tests pass offline. **Recipe** = guidance and API pointers only: no template, no adapter, no tests; you write the integration by hand and the audit checks it only partially. **Unsupported** = no code is generated for it (see `portability.md` for all four levels, including Experimental).
+Support levels: **Scaffolded** = `scaffold.py` generates it, the audit understands it, and CI generates it and runs its tests on every push. **Recipe** = guidance and API pointers only: no template, no adapter, no tests; you write the integration by hand and the audit checks it only partially. **Unsupported** = no code is generated for it (see `portability.md` for all four levels, including Experimental).
 
 | Engine | Choose when | Support | Scaffold |
 |---|---|---|---|

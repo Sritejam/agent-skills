@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: pushes-back-on-unneeded-agent
+expected_outcome: |
+  Build mode. The skill starts the interview with a small batch of concrete questions (including asking for example emails and their correct tags) instead of building. It does not scaffold or write code yet. Where it gives a view on the tier, it points to a single structured-output call or a simple workflow, not an autonomous agent, because classifying into three fixed labels needs no open-ended tool use.

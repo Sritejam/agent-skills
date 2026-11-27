@@ -77,6 +77,14 @@ def render(path: Path, values: dict[str, str]) -> None:
     path.write_text(text, encoding="utf-8")
 
 
+def _display_path(p: Path) -> str:
+    """Show paths under $HOME as ~/..., so generated docs don't embed a username."""
+    try:
+        return "~/" + str(p.relative_to(Path.home()))
+    except ValueError:
+        return str(p)
+
+
 def pyproject(name: str, deps: list[str]) -> str:
     dep_lines = "\n".join(f'    "{d}",' for d in deps)
     return f"""[build-system]
@@ -172,6 +180,7 @@ def main() -> None:
         "pattern": args.pattern.replace("_", " "),
         "mcp_enabled": repr([w.removeprefix("mcp-") for w in mcp_chosen]),
         "env_extra": "\n".join(env_extra),
+        "skill_dir": _display_path(SKILL),
     }
     for p in target.rglob("*"):
         if p.is_file() and ".git" not in p.parts:

@@ -1,6 +1,6 @@
 # Integrations: the 20 reference repos
 
-Local clones: `$AGENT_ARCHITECT_REPOS` (default `~/Desktop/agents/repos/<owner>_<repo>`). **Grep the clone for the real API before writing integration code**; the "Look here" column says where. Default is to add **no** integration; each must answer a requirement.
+Local clones (optional): `$AGENT_ARCHITECT_REPOS/<owner>_<repo>`, if the user has set it; otherwise read the installed package source. **Grep the clone for the real API before writing integration code**; the "Look here" column says where. Default is to add **no** integration; each must answer a requirement.
 
 Usage scope: personal/educational. All repos usable; keep LICENSE + credit in the project's `THIRD_PARTY_NOTICES.md` (the scaffold creates it) for anything copied, and keep Dify's logo if its UI is used. For hosted multi-tenant or commercial use, re-check Dify, Phoenix (ELv2), and Langfuse `ee/`.
 
