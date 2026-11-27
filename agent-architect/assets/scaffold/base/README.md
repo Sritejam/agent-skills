@@ -12,6 +12,10 @@ pytest -q                   # guard + output tests, no API calls
 python -m agent.main "your task"
 ```
 
+## Before this is real
+
+The example tool (`lookup_record` over a fake dict), schema, workers and every case in `evals/cases.yaml` are **placeholders**. They are marked in the code and `audit.py` fails (rule V4) until each is replaced with task-specific behaviour.
+
 ## What's built in
 
 | Concern | Where |

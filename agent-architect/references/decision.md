@@ -82,13 +82,19 @@ An MCP server where a custom tool fits is overbuilding. Skills and MCP complemen
 
 ## 5. Engine choice
 
-| Engine | Choose when | Scaffold |
-|---|---|---|
-| **Claude Agent SDK** (default for agents) | want Claude Code's tools, loop, sessions, subagents, hooks, permission modes | `sdk_agent`, `orchestrator` |
-| **Anthropic SDK / Messages API** | single calls, workflows, custom loops, batches | `single_call`, `workflow`, `custom_loop` |
-| **LangGraph** | you want to *author* the flow as a typed graph with checkpoints, human-in-the-loop, time travel | start from `workflow`, see integrations.md |
-| **PydanticAI** | model-driven agent whose key need is **type-safe validated output** | see integrations.md |
-| **Strands** | lean model-driven loop, AWS/Bedrock-native, MCP consumer | see integrations.md |
+Support levels: **Scaffolded** = `scaffold.py` generates it, the audit understands it, and the generated tests pass offline. **Recipe** = guidance and API pointers only: no template, no adapter, no tests; you write the integration by hand and the audit checks it only partially. **Unsupported** = no code is generated for it (see `portability.md` for all four levels, including Experimental).
+
+| Engine | Choose when | Support | Scaffold |
+|---|---|---|---|
+| **Claude Agent SDK** (default for agents) | want Claude Code's tools, loop, sessions, subagents, hooks, permission modes | Scaffolded | `sdk_agent`, `orchestrator` |
+| **Anthropic SDK / Messages API** | single calls, workflows, custom loops, batches | Scaffolded | `single_call`, `workflow`, `custom_loop` |
+| **MCP server** (Python `mcp` SDK) | exposing tools to other clients | Scaffolded | `mcp_server` |
+| **LangGraph** | you want to *author* the flow as a typed graph with checkpoints, human-in-the-loop, time travel | Recipe | none: start from `workflow`, see integrations.md |
+| **PydanticAI** | model-driven agent whose key need is **type-safe validated output** | Recipe | none: see integrations.md |
+| **Strands** | lean model-driven loop, AWS/Bedrock-native, MCP consumer | Recipe | none: see integrations.md |
+| Non-Claude providers (OpenAI, Gemini, local models) | | Unsupported | none |
+
+When you recommend a Recipe engine, say so plainly in the architecture doc: the user gets the safe core's *ideas* but must hand-port the guards, budget caps and output validation, and the Stage 5 audit will miss engine-specific flaws.
 
 Don't cross-attribute: StateGraph/reducers/checkpointers are LangGraph; validated typed output is PydanticAI's signature. All three work with Claude.
 

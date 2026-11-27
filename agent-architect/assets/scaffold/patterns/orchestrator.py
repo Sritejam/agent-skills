@@ -22,6 +22,8 @@ from agent.core.guards import sdk_hooks
 
 log = logging.getLogger(__name__)
 
+# AGENT_ARCHITECT_PLACEHOLDER: example researcher/reviewer workers. Replace them with the
+# workers your task needs; audit.py fails (V4) until this line is gone.
 # Each worker: a description the manager matches on, a focused prompt, and ONLY the
 # tools it needs. Omitting `tools` would give it everything, so always set it.
 WORKERS: dict[str, AgentDefinition] = {

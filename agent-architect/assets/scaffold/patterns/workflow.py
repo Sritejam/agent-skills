@@ -26,6 +26,8 @@ def ask(claude: Claude, prompt: str, *, model: str | None = None, system: str | 
 
 # ------------------------------------------------------------------ route
 
+# AGENT_ARCHITECT_PLACEHOLDER: example simple/complex router and chain. Replace the routes,
+# prompts and steps with your workflow; audit.py fails (V4) until this line is gone.
 ROUTES = ["simple", "complex"]
 
 

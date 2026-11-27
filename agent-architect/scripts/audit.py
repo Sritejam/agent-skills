@@ -28,6 +28,7 @@ SECRET_RES = [
     (re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----"), "private key"),
 ]
 SAMPLING = {"temperature", "top_p", "top_k"}
+PLACEHOLDER = "AGENT_ARCHITECT_" + "PLACEHOLDER"  # split so this file never matches itself
 
 
 @dataclass
@@ -99,6 +100,24 @@ class Auditor:
             for cat in ("representative", "boundary", "adversarial"):
                 if not re.search(rf"category:\s*{cat}\b", text):
                     self.add("ERROR", "V1", "evals/cases.yaml", 0, f"no {cat} cases")
+
+            # V4: scaffold placeholders must be replaced before the done gate.
+            n = len(re.findall(r"^\s*placeholder:\s*true\b", text, re.M))
+            if n:
+                self.add("ERROR", "V4", "evals/cases.yaml", 0,
+                         f"{n} placeholder eval case(s) left from the scaffold; replace with interview cases")
+
+        for p in self.files({".py"}):
+            if p.resolve() == Path(__file__).resolve():
+                continue
+            try:
+                lines = p.read_text(encoding="utf-8").splitlines()
+            except (UnicodeDecodeError, OSError):
+                continue
+            for i, line in enumerate(lines, 1):
+                if PLACEHOLDER in line:
+                    self.add("ERROR", "V4", p, i, "scaffold placeholder still present; replace with task-specific code")
+                    break
 
         env_ex = self.root / ".env.example"
         if env_ex.exists():

@@ -86,3 +86,4 @@ Each rule has an ID. `scripts/audit.py` checks the ones marked **[auto]**; you c
 - **V1 [auto]** `evals/cases.yaml` exists with representative, boundary **and** adversarial cases.
 - **V2** Evals pass before "done"; a new model or prompt version must match or beat the baseline (`evals/baseline.json`).
 - **V3** Tests for guards and output parsing run without an API key.
+- **V4 [auto]** No scaffold placeholders remain: no `AGENT_ARCHITECT_PLACEHOLDER` marker in Python files and no `placeholder: true` eval case. The example `lookup_record` tool, its fake data and the example evals exist to show the shape; evals passing against them prove nothing about the real task.

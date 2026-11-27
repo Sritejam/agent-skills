@@ -7,6 +7,8 @@ description: Interactive, end-to-end builder for Claude-powered agents and LLM a
 
 Build Claude agents end-to-end, interactively, with the known failure modes designed out instead of discovered in production.
 
+**Scope.** Scaffolded today: Claude models, Python, and the six patterns (Anthropic SDK, Claude Agent SDK, MCP server). LangGraph, PydanticAI and Strands are recipes (guidance, no template or tests); other providers are unsupported. See the support table in `references/decision.md` §5 and the levels in `references/portability.md`, and state the support level whenever you recommend an engine.
+
 The user brings an idea. You leave them with a running, tested project whose architecture they understood and approved at each step. The value of this skill is the **gates**: you don't write code before the design is approved, and you don't call the build done until the audit and evals pass. Without gates, LLM apps ship with unbounded loops, retry storms, prompt injection holes and leaked keys, because each of those looks fine in a demo.
 
 ## Bundled resources (read when the stage calls for them)
@@ -80,6 +82,7 @@ Then build the domain logic **with the user**, one piece at a time. Treat scaffo
 - Wire chosen integrations from `agent/integrations/`. Grep the reference repo before touching their APIs.
 - Replace every fake/demo tool with an authorized implementation or a clearly reported omission.
 - Turn the interview's input/output examples into `evals/cases.yaml`; starter examples do not demonstrate acceptance criteria.
+- Remove every scaffold placeholder: code marked `AGENT_ARCHITECT_PLACEHOLDER` and every `placeholder: true` eval case. `audit.py` fails (rule V4) until they are gone, because evals passing against a fake `lookup_record` prove nothing.
 
 Show each meaningful piece as you go. Don't silently generate 15 files.
 
