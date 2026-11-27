@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: stops-for-architecture-approval
+expected_outcome: |
+  The requirements are complete, so the skill moves to the architecture stage: it writes a design document (design/architecture.md or equivalent) covering the pattern with a flow diagram, model choice, tools and their mechanism, and guardrails including a turn and budget cap and a write restriction to ./briefs. Despite "go ahead", it stops and asks for explicit approval of the architecture before scaffolding any code.

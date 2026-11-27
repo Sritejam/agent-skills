@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: audits-existing-agent-repo
+expected_outcome: |
+  Audit mode. The skill runs its static audit (scripts/audit.py) on support-bot/ and walks the user through the findings with their rule IDs: the unbounded while-True loop around the model call, the missing max_turns/max_budget_usd caps, sampling parameters sent to the model, an unpinned "latest" model alias, permission_mode bypassPermissions, .env not gitignored, and no eval set. It explains why each matters, proposes fixes, and asks before changing the user's code.
+context:
+  scaffold_script: place-files.sh
