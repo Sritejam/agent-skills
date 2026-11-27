@@ -4,7 +4,7 @@ Claude Code skills for building AI agents.
 
 ## agent-architect
 
-An interactive, end-to-end builder for Claude-powered agents in Python, with guardrails built in.
+An interactive builder for agents, with a tested scaffold currently focused on Claude-powered Python projects. The workflow can plan other stacks, but it must label them as recipes or experimental until their scaffolds and checks are implemented and tested.
 
 1. **Interview**: turns your idea into requirements, with examples that become the eval set
 2. **Decide**: single call vs workflow vs agent (pushes back when you don't need an agent)
@@ -13,7 +13,7 @@ An interactive, end-to-end builder for Claude-powered agents in Python, with gua
 5. **Verify**: static audit + tests + evals (representative, boundary, adversarial). **Done gate**
 6. **Hand off**: how to run it, guardrails, scores, cost, open risks
 
-Every generated project includes: a single API client module (pinned model, transient-only retries, token ledger), turn and budget caps, a PreToolUse guard (destructive commands, protected paths, secret leaks, approval for risky tools), stop_reason-aware structured output with validate → re-prompt, untrusted-input delimiting, Claude Code config, and a frozen eval set with a regression gate.
+The scaffold includes runtime-specific templates, guardrails, tests, and starter evals. Messages API patterns use the shared client; Agent SDK patterns use the SDK runtime directly. Replace demo tools and starter evals with requirement-specific implementations before treating a generated project as complete. See [the portability and support guide](agent-architect/references/portability.md) for stack maturity, architecture decisions, and end-to-end verification gates.
 
 ### Install
 
