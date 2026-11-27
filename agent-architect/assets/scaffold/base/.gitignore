@@ -1,0 +1,16 @@
+# secrets and personal config (never commit)
+.env
+.env.*
+!.env.example
+.claude/settings.local.json
+CLAUDE.local.md
+
+# python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+*.egg-info/
+
+# eval run outputs (baseline.json IS committed)
+evals/results/
